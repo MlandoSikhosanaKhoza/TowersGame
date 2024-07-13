@@ -12,6 +12,7 @@
     <Folder Include="src\models\" />
     <Folder Include="src\components\" />
     <Folder Include="src\routes\" />
-    <Folder Include="src\services\" />
+    <Folder Include="src\services\implementation\" />
+    <Folder Include="src\services\intefaces\" />
   </ItemGroup>
 </Project>
