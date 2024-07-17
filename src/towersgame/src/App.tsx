@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './layout';
 import { Home } from './pages/home';
 import { Settings } from './pages/settings';
+
 function App() {
 
   return (

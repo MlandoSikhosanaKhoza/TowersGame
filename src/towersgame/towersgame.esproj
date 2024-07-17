@@ -10,7 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\models\" />
-    <Folder Include="src\components\" />
+    <Folder Include="src\helper\" />
+    <Folder Include="src\enums\" />
     <Folder Include="src\routes\" />
     <Folder Include="src\services\implementation\" />
     <Folder Include="src\services\intefaces\" />
