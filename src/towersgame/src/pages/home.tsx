@@ -16,7 +16,7 @@ export const Home = () => {
 
 
     /*Initialize block service*/
-    const blockService: IBlockService = new BlockService();
+    const blockService: IBlockService     = new BlockService();
     const bettingService: IBettingService = new BettingService();
 
     const displayMultipliers = () => {
@@ -38,11 +38,20 @@ export const Home = () => {
     const collectMoney = () => {
         if (user.isPlaying && user.currentLayer != user.noOfRows) {
             const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.currentLayer! + 1, user.bettingAmount!);
-            user.balance = (user.balance! + collectionAmount);
+            user.winnings!.push(collectionAmount);
+            user.balance = (user.balance! - user.bettingAmount! + collectionAmount);
             setUser(user);
         }
     };
 
+    const displayBalance = () => {
+        if (user.isPlaying) {
+            return <span>{(user.balance! - user.bettingAmount!).toFixed(2)}</span>
+        } else {
+            return <span>{(user.balance)?.toFixed(2)}</span>
+        }
+    };
+    
     const displayBettingMessage = () => {
         const haventPlayedYet = user.currentLayer == user.noOfRows;
         
@@ -65,7 +74,7 @@ export const Home = () => {
 
     };
     const lose = (): void => {
-
+        user.winnings!.push(0);
         blockService.displayRow(tower, user.currentLayer ?? 0);
         user.balance = user.balance! - user.bettingAmount!;
         setTower([...tower]);
@@ -148,19 +157,25 @@ export const Home = () => {
                             <div className="w3-bar">
                                 <button className={`w3-bar-item w3-border w3-col s4 ${user.currentDifficulty == Difficulty.Easy ? "w3-black" : ""}`}
                                     onClick={() => {
-                                        setUser({ ...user, currentDifficulty: Difficulty.Easy })
+                                        if (!user.isPlaying) {
+                                            setUser({ ...user, currentDifficulty: Difficulty.Easy });
+                                        }
                                     }}>
                                     Easy
                                 </button>
                                 <button className={`w3-bar-item w3-border w3-col s4 ${user.currentDifficulty == Difficulty.Medium ? "w3-black" : ""}`}
                                     onClick={() => {
-                                        setUser({ ...user, currentDifficulty: Difficulty.Medium })
+                                        if (!user.isPlaying) {
+                                            setUser({ ...user, currentDifficulty: Difficulty.Medium });
+                                        }
                                     }}>
                                     Medium
                                 </button>
                                 <button className={`w3-bar-item w3-border w3-col s4 ${user.currentDifficulty == Difficulty.Hard ? "w3-black" : ""}`}
                                     onClick={() => {
-                                        setUser({ ...user, currentDifficulty: Difficulty.Hard });
+                                        if (!user.isPlaying) {
+                                            setUser({ ...user, currentDifficulty: Difficulty.Hard });
+                                        }
                                     }}>
                                     Hard
                                 </button>
@@ -173,14 +188,26 @@ export const Home = () => {
                             <h3>Bet Amount</h3>
                             <div className="w3-padding">
                                 <div className="w3-border w3-white">
-                                    <div className="w3-green" style={{ height: "10px", width:"20%" }}></div>
+                                    <div className="w3-green" style={{ height: "10px", width: `${bettingService.getBetPercentageFrom(user.bettingAmount!)}%` }}></div>
                                 </div>
                                 <div className="w3-bar w3-margin-top">
-                                    <button className="w3-col s2">
+                                    <button className="w3-col s2"
+                                        onClick={() => {
+                                            if (!user.isPlaying) {
+                                                const decreasedBettingAmount = bettingService.decreaseBetFrom(user.bettingAmount!);
+                                                setUser({ ...user, bettingAmount: decreasedBettingAmount });
+                                            }
+                                        } }>
                                         <img src="/src/assets/down-dummy.svg" width={20}/>
                                     </button>
                                     <button className="w3-col s8 w3-black w3-text-red">$ {user.bettingAmount?.toFixed(2)}</button>
-                                    <button className="w3-col s2">
+                                    <button className="w3-col s2"
+                                        onClick={() => {
+                                            if (!user.isPlaying) {
+                                                const increasedBettingAmount = bettingService.increaseBetFrom(user.bettingAmount!);
+                                                setUser({ ...user, bettingAmount: increasedBettingAmount });
+                                            }
+                                        }}>
                                         <img src="/src/assets/up-dummy.svg" width={20} />
                                     </button>
                                 </div>
@@ -209,7 +236,7 @@ export const Home = () => {
                         <div className="w3-padding w3-margin-top">
                             <div className="w3-round-medium w3-white w3-center w3-container w3-margin-top">
                                 <h4>Demo Balance</h4>
-                                <h5>$ {user.balance!.toFixed(2)}</h5>
+                                <h5>$ {displayBalance()}</h5>
                                 <div className="w3-col s12">
                                     <p>
                                         {user.winnings?.map((w) => {
