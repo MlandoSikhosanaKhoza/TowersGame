@@ -2,8 +2,10 @@ import { Container, Text } from "@pixi/react";
 import { TextButton } from "./textButtonComponent";
 import { ICoordinates } from "./interfaces/icoordinates";
 import { TextStyle } from "pixi.js";
+import { User } from "../models/user";
 
 interface IMultiplierProps extends ICoordinates {
+    user: User;
     listOfMultipliers: number[];
 }
 /**
@@ -12,6 +14,7 @@ interface IMultiplierProps extends ICoordinates {
  * @returns
  */
 export const MultiplierControl = (props: IMultiplierProps) => {
+    
     return <Container x={props.x} y={props.y}>
         <Text
             text="Tower Game"

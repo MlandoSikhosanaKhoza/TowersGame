@@ -8,6 +8,6 @@ export class Block {
     }
 
     getImageSource = () : string => {
-        return "/src/assets/question-dummy.svg";
+        return "/src/assets/sprites/box.png";
     };
 }

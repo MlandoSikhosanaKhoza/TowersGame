@@ -6,6 +6,7 @@ import { IDimensions } from './interfaces/idimensions';
 interface ITextButtonProps extends ICoordinates, IDimensions {
     text: string,
     colour?: string,
+    fontSize?: number,
     handleClick?: () => void;
 }
 
@@ -23,7 +24,7 @@ export const TextButton = (props: ITextButtonProps) => {
             const buttonText = new Text(props.text,{
                 fontFamily: 'Arial',
                 fill: '#000',
-                fontSize: 16
+                fontSize: props.fontSize??16
             });
             g.interactive = true;
             g.buttonMode = true;

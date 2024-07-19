@@ -5,7 +5,7 @@ export class User {
     bettingAmount?: number;
     winnings?: number[];
     noOfRows?: number;
-    currentLayer?: number;
+    currentRow?: number;
     currentDifficulty?: Difficulty;
     isPlaying?: boolean;
 
@@ -14,7 +14,7 @@ export class User {
         this.bettingAmount     = 20;
         this.winnings          = [];
         this.noOfRows          = 8;
-        this.currentLayer      = 8;
+        this.currentRow      = 8;
         this.currentDifficulty = Difficulty.Easy;
         this.isPlaying         = false;
     }

@@ -21,7 +21,7 @@ export class ScoreSystemHelper {
         new ScoreSystem(3, 15.43),
         new ScoreSystem(3, 7.71),
         new ScoreSystem(4, 4.41),
-        new ScoreSystem(5, 2.20)
+        new ScoreSystem(5, 2.20),
     ];
     private static hardScoreSystem = [
         new ScoreSystem(1, 548.80),
@@ -47,14 +47,21 @@ export class ScoreSystemHelper {
         throw new DOMException("A difficulty is required", "Difficulty missing");
     }
 
-    static getRewardMultiplierFor(difficulty: Difficulty, layerIndex: number): number {
+    static getRewardMultiplierFor(difficulty: Difficulty, currentRow: number, noOfRows: number): number {
+        let selectedIndex;
+        if (currentRow == noOfRows) {
+            return 0;
+        }
         switch (difficulty) {
             case Difficulty.Easy:
-                return this.easyScoreSystem[layerIndex].rewardMultiplier??0;
+                selectedIndex = this.easyScoreSystem.length - (noOfRows - currentRow) ;
+                return this.easyScoreSystem[selectedIndex].rewardMultiplier??0;
             case Difficulty.Medium:
-                return this.mediumScoreSystem[layerIndex].rewardMultiplier??0;
+                selectedIndex = this.mediumScoreSystem.length - (noOfRows - currentRow) ;
+                return this.mediumScoreSystem[selectedIndex].rewardMultiplier??0;
             case Difficulty.Hard:
-                return this.hardScoreSystem[layerIndex].rewardMultiplier??0;
+                selectedIndex = this.hardScoreSystem.length - (noOfRows - currentRow) ;
+                return this.hardScoreSystem[selectedIndex].rewardMultiplier??0;
         }
         throw new DOMException("A difficulty is required", "Difficulty missing");
     }

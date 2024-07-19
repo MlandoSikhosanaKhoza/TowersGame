@@ -1,19 +1,18 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { BlocksComponent } from "../components/blocksComponent";
+import {  useEffect,  useState } from "react";
 import { Block } from "../models/block";
 import { IBlockService } from "../services/intefaces/iblockService";
 import { BlockService } from "../services/implementation/blockService";
-import { Difficulty } from "../enums/difficulty";
 import { User } from "../models/user";
 import { IBettingService } from "../services/intefaces/ibettingService";
 import { BettingService } from "../services/implementation/bettingService";
-import { Container, Sprite, Stage, Text } from "@pixi/react";
-import { BlurFilter,  TextStyle } from "pixi.js";
+import { Container, Stage, Text } from "@pixi/react";
+import { TextStyle } from "pixi.js";
 import { TextButton } from "../components/textButtonComponent";
 import { NumberOfRowsControl } from "../components/numberOfRowsControl";
 import { DifficultyControl } from "../components/difficultyControl";
 import { BettingControl } from "../components/bettingControl";
 import { MultiplierControl } from "../components/multiplierControl";
+import { TowerControl } from "../components/towerControl";
 
 export const Home = () => {
     /* Add Layer Count */
@@ -21,15 +20,13 @@ export const Home = () => {
 
     const [user, setUser] = useState<User>(new User());
 
-    
-
     /*Initialize block service*/
     const blockService: IBlockService     = new BlockService();
     const bettingService: IBettingService = new BettingService();
 
     const collectMoney = () => {
-        if (user.isPlaying && user.currentLayer != user.noOfRows) {
-            const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.currentLayer! + 1, user.bettingAmount!);
+        if (user.isPlaying && user.currentRow != user.noOfRows) {
+            const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.bettingAmount!, user.currentRow!, user.noOfRows!);
             user.winnings!.push(collectionAmount);
             user.balance = (user.balance! - user.bettingAmount! + collectionAmount);
             setUser(user);
@@ -45,29 +42,29 @@ export const Home = () => {
     };
     
     const displayBettingMessage = () => {
-        const haventPlayedYet = user.currentLayer == user.noOfRows;
+        const haventPlayedYet = user.currentRow == user.noOfRows;
         
         if (!user.isPlaying) {
             return "BET";
         } else if (haventPlayedYet) {
             return "END GAME";
         } else {
-            const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.currentLayer!+1, user.bettingAmount!);
+            const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.bettingAmount!, user.currentRow!, user.noOfRows!);
             return `Collect ${collectionAmount.toFixed(2)}`;
         }
     };
     
     const win = (): void => {
 
-        blockService.displayRow(tower, user.currentLayer ?? 0);
+        blockService.displayRow(tower, user.currentRow ?? 0);
 
         setTower([...tower]);
-        setUser({ ...user, currentLayer: (user.currentLayer ?? 0) - 1 });
+        setUser({ ...user, currentRow: (user.currentRow ?? 0) - 1 });
 
     };
     const lose = (): void => {
         user.winnings!.push(0);
-        blockService.displayRow(tower, user.currentLayer ?? 0);
+        blockService.displayRow(tower, user.currentRow ?? 0);
         user.balance = user.balance! - user.bettingAmount!;
         setTower([...tower]);
         setUser({ ...user, isPlaying: false, balance: user.balance });
@@ -93,15 +90,17 @@ export const Home = () => {
                             rowFrom={4} rowTo={8} x={0} y={0}
                             handleRowSelection={(selectedRow) => {
                                 if (!user.isPlaying) {
-                                    setUser({ ...user, noOfRows: selectedRow, currentLayer: selectedRow });
-                                    setTower(blockService.generateTower(4));
+                                    setUser({ ...user, noOfRows: selectedRow, currentRow: selectedRow });
+                                    setTower(blockService.generateTower(selectedRow));
                                 }
                             }} />
 
                         <DifficultyControl x={0} y={60}
                             selectedDifficulty={user.currentDifficulty!}
                             handleDifficultySelection={(difficulty) => {
-                                setUser({ ...user, currentDifficulty: difficulty });
+                                if (!user.isPlaying) {
+                                    setUser({ ...user, currentDifficulty: difficulty });
+                                }
                             }} />
                         <BettingControl x={0} y={120}
                             width={window.innerWidth * 0.25} height={300}
@@ -123,10 +122,10 @@ export const Home = () => {
                         <TextButton x={10} y={window.innerHeight - 200} height={60} width={(window.innerWidth * 0.25) - 10} text={displayBettingMessage()} handleClick={() => {
                             if (user.isPlaying) {
                                 collectMoney();
-                                setUser({ ...user, isPlaying: false, currentLayer: user.noOfRows });
+                                setUser({ ...user, isPlaying: false, currentRow: user.noOfRows });
                             } else {
                                 blockService.substituteTowerValues(tower, user.currentDifficulty);
-                                setUser({ ...user, isPlaying: true, currentLayer: user.noOfRows });
+                                setUser({ ...user, isPlaying: true, currentRow: user.noOfRows });
                                 setTower(tower);
                             }
                         }} />
@@ -160,12 +159,18 @@ export const Home = () => {
                                 })
                             }
                         />
-
+                        {user.winnings!.map((money, index) => <TextButton x={70 * index} y={window.innerHeight - 60} width={60} height={20} fontSize={9} text={`$ ${money.toFixed(2)}`} />)}
                     </Container>
                 }
                 
                 <Container x={window.innerWidth * 0.25} y={0}>
-                    <MultiplierControl x={0} y={0} listOfMultipliers={bettingService.getTop5RewardList(user.currentDifficulty!, user.noOfRows!)}/>
+                    <MultiplierControl x={0} y={0} listOfMultipliers={bettingService.getTop5RewardList(user.currentDifficulty!, user.currentRow!, user.noOfRows!)} user={user} />
+                    <TowerControl x={10} y={200}
+                        width={window.innerWidth * 0.75}
+                        height={window.innerHeight - 200}
+                        Blocks={tower} PlayRow={user.currentRow ?? -1}
+                        IsPlaying={user.isPlaying ?? false}
+                        Win={win} Lose={lose} />
                 </Container>
             </Stage>
         </div>
