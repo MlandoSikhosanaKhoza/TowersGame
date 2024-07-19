@@ -13,6 +13,7 @@ import { DifficultyControl } from "../components/difficultyControl";
 import { BettingControl } from "../components/bettingControl";
 import { MultiplierControl } from "../components/multiplierControl";
 import { TowerControl } from "../components/towerControl";
+import { ScoreSystemHelper } from "../helper/scoreSystemHelper";
 
 export const Home = () => {
     /* Add Layer Count */
@@ -171,6 +172,22 @@ export const Home = () => {
                         Blocks={tower} PlayRow={user.currentRow ?? -1}
                         IsPlaying={user.isPlaying ?? false}
                         Win={win} Lose={lose} />
+                    {user.isPlaying && < Text
+                        text={`Bombs - ${ScoreSystemHelper.getNumberOfBombsFor(user.currentDifficulty!, user.currentRow!-1)} in active row ${user.currentRow}`}
+                        x={10}
+                        y={window.innerHeight - 50}
+                        style={
+                            new TextStyle({
+                                align: 'center',
+                                fill: '0xffffff',
+                                fontSize: 20,
+                                letterSpacing: 3,
+                                dropShadow: true,
+                                dropShadowColor: '#E72264',
+                                dropShadowDistance: 6,
+
+                            })
+                        } />}
                 </Container>
             </Stage>
         </div>
