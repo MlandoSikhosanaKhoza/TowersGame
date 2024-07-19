@@ -9,6 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\components\interfaces\" />
     <Folder Include="src\models\" />
     <Folder Include="src\helper\" />
     <Folder Include="src\enums\" />
