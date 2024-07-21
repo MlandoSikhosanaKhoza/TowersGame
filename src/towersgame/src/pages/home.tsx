@@ -172,7 +172,7 @@ export const Home = () => {
                         Blocks={tower} PlayRow={user.currentRow ?? -1}
                         IsPlaying={user.isPlaying ?? false}
                         Win={win} Lose={lose} />
-                    {user.isPlaying && < Text
+                    {user.isPlaying && user.currentRow! >0 && < Text
                         text={`Bombs - ${ScoreSystemHelper.getNumberOfBombsFor(user.currentDifficulty!, user.currentRow!-1)} in active row ${user.currentRow}`}
                         x={10}
                         y={window.innerHeight - 50}
