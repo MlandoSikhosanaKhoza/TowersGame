@@ -28,7 +28,11 @@ export class BlockService implements IBlockService {
         }
         return tower;
     }
-
+    /**
+     * 
+     * @param tower
+     * @param difficulty
+     */
     substituteTowerValues(tower: Block[][], difficulty?: Difficulty) {
         let numOfBombs = -1;
         let listOfBombPositions: number[] = [];

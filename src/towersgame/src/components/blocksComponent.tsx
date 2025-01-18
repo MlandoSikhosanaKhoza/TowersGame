@@ -43,7 +43,7 @@ export class BlocksComponent extends React.Component<IBlocksProps> {
         return this.props.Blocks.map((b, index) => {
             /* Since index starts from zero */
             const selectedIndex: number = this.props.PlayRow - 1;
-            const isCurrentRow = index == selectedIndex && this.props.IsPlaying;
+            const isCurrentRow: boolean = index == selectedIndex && this.props.IsPlaying;
             return <div key={`${Math.random()}`.replace('.', '-')} className="w3-row w3-center w3-padding-none">
                 {this.printIndividualBlocks(b, isCurrentRow)}
                     </div>

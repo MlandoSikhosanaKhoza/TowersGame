@@ -25,6 +25,11 @@ export const Home = () => {
     const blockService: IBlockService     = new BlockService();
     const bettingService: IBettingService = new BettingService();
 
+    const getTop5Winnings = () => {
+        return user.winnings!
+            .filter((_winning, index) => (user.winnings!.length - 6) <= (index));
+    };
+
     const collectMoney = () => {
         if (user.isPlaying && user.currentRow != user.noOfRows) {
             const collectionAmount = bettingService.calculateCollectionAmount(user.currentDifficulty!, user.bettingAmount!, user.currentRow!, user.noOfRows!);
@@ -160,7 +165,9 @@ export const Home = () => {
                                 })
                             }
                         />
-                        {user.winnings!.map((money, index) => <TextButton x={70 * index} y={window.innerHeight - 60} width={60} height={20} fontSize={9} text={`$ ${money.toFixed(2)}`} />)}
+                        {getTop5Winnings()
+                            .map((money, index) =>
+                                <TextButton key={`index-${index}`} x={70 * index} y={window.innerHeight - 60} width={60} height={20} fontSize={9} text={`$ ${money.toFixed(2)}`} colour={(index == getTop5Winnings().length-1) ? "#E72264" : undefined} />)}
                     </Container>
                 }
                 
